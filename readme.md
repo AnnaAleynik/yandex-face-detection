@@ -105,3 +105,8 @@ curl -s ${TG_URL}
 
 
 #### Примеры работы
+![1](https://github.com/AnnaAleynik/yandex-face-detection/blob/main/imgs/ex_1.png)
+
+![2](https://github.com/AnnaAleynik/yandex-face-detection/blob/main/imgs/ex_2.png)
+
+![3](https://github.com/AnnaAleynik/yandex-face-detection/blob/main/imgs/ex_3.png)
