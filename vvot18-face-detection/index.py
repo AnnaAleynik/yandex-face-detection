@@ -27,30 +27,32 @@ def handler(event, context):
         data = json.dumps(body_json(encoded_photo), indent=4)
     )
 
-    faces = json.loads(r.content.decode('utf-8'))['results'][0]['results'][0]['faceDetection']['faces']
+    print(r.content)
+    faces = json.loads(r.content.decode('utf-8'))['results'][0]['results'][0]['faceDetection']
 
-    sqs_session = boto3.session.Session(
-        region_name='ru-central1',
-        aws_access_key_id=os.environ['SQS_AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key=os.environ['SQS_AWS_SECRET_KEY']
-    )
-    sqs_client = sqs_session.client(
-        service_name='sqs',
-        endpoint_url='https://message-queue.api.cloud.yandex.net',
-        region_name='ru-central1'
-    )
-
-    queue_url = os.environ['QUEUE_URL']
-
-    for face in faces:
-        message = json.dumps({
-            'origin_key': object_id,
-            'vertices': face['boundingBox']['vertices']
-        })
-        sqs_client.send_message(
-            QueueUrl=queue_url,
-            MessageBody=message
+    if 'faces' in faces:
+        sqs_session = boto3.session.Session(
+            region_name='ru-central1',
+            aws_access_key_id=os.environ['SQS_AWS_ACCESS_KEY_ID'],
+            aws_secret_access_key=os.environ['SQS_AWS_SECRET_KEY']
         )
+        sqs_client = sqs_session.client(
+            service_name='sqs',
+            endpoint_url='https://message-queue.api.cloud.yandex.net',
+            region_name='ru-central1'
+        )
+
+        queue_url = os.environ['QUEUE_URL']
+
+        for face in faces['faces']:
+            message = json.dumps({
+                'origin_key': object_id,
+                'vertices': face['boundingBox']['vertices']
+            })
+            sqs_client.send_message(
+                QueueUrl=queue_url,
+                MessageBody=message
+            )
 
     return {
         'statusCode': 200,

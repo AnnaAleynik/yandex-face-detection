@@ -1,0 +1,35 @@
+openapi: 3.0.0
+info:
+  title: for-vvot18-boot
+  version: 1.0.0
+paths:
+  /:
+    get:
+      parameters:
+        - name: face
+          in: query
+          required: true
+          schema:
+            type: string
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: itis-2022-2023-vvot18-faces
+        object: '{face}'
+        error_object: error.html
+        presigned_redirect: true
+        service_account_id: #{service_account_id}
+  photo:
+    get:
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: itis-2022-2023-vvot18-photos
+        object: '{id}'
+        error_object: error.html
+        presigned_redirect: true
+        service_account_id: #{service_account_id}
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: string
